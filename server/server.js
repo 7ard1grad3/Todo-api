@@ -27,6 +27,19 @@ try{
                 res.status(400).send(err);
         })
     });
+
+    app.get('/todo',(req,res)=>{
+        Todo.find().then(
+            (todos)=>{
+                res.send({
+                    todos
+                });
+            },(err)=>{
+                res.status(400).send(err);
+            })
+    });
+
+
     /*Http2 server setup*/
     /*spdy
         .createServer(options, app)
