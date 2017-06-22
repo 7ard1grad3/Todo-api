@@ -7,14 +7,13 @@ var bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/users');
-
 const options = {
     key: fs.readFileSync(__dirname + '/http2-express/server.key'),
     cert:  fs.readFileSync(__dirname + '/http2-express/server.crt')
-}
+};
 
 try{
-    const app = express();
+    var app = express();
 
     app.use(bodyParser.json());
     app.post('/todo',(req,res)=>{
@@ -28,18 +27,26 @@ try{
                 res.status(400).send(err);
         })
     });
-
     /*Http2 server setup*/
-    spdy
+    /*spdy
         .createServer(options, app)
         .listen(port, (error) => {
             if (error) {
                 throw new Error(error);
             } else {
-                console.log('Http2 server started')
+                console.log('Http2 server started');
+
             }
-        });
+        });*/
+    /*Regualr http setup*/
+
+    app.listen(3000, () => {
+        console.log('Http server started');
+    });
+
+    module.exports = {app};
 }catch(err){
     console.log('Error in app: ' + err)
     return process.exit(1)
 }
+
