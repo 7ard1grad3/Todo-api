@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 var bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose');
+const {ObjectID} = require('mongodb');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/users');
 const options = {
@@ -16,6 +17,7 @@ try{
     var app = express();
 
     app.use(bodyParser.json());
+    /*Create new todos */
     app.post('/todo',(req,res)=>{
         var newTodo = new Todo({
             text: req.body.text
@@ -28,6 +30,7 @@ try{
         })
     });
 
+    /*Create list of all todos*/
     app.get('/todo',(req,res)=>{
         Todo.find().then(
             (todos)=>{
@@ -37,6 +40,33 @@ try{
             },(err)=>{
                 res.status(400).send(err);
             })
+    });
+
+    /*Receive specific todos by id*/
+    app.get('/todo/:id',(req,res)=>{
+        let _id = req.param('id'); //Receive id
+        try{
+            _id = new ObjectID(_id);
+        }catch (e){
+            return res.status(400).send({message: "Invalid id for todo"});
+        }
+
+            console.log('New request to search by id ' + _id);
+            Todo.findOne(_id).then(
+                (todo)=>{
+                    if(todo !== null){
+                    res.send({
+                        todo
+                    });
+                    }else{
+                        return res.send({todo,message: "todo not found in system"});
+                    }
+                },(err)=>{
+                    res.status(400).send(err);
+                }).catch((err)=>{
+                return res.status(400).send({message:"No todos found"});
+            })
+
     });
 
 
