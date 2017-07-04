@@ -1,5 +1,17 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const uri = process.env.MONGO_DB || 'mongodb://localhost:27017/TodoApp';
+
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://sheidin:testpassword@ds149132.mlab.com:49132/sheidin');
+const options = {
+    db: { native_parser: true },
+    user: 'sheidin',
+    pass: 'testpassword'
+};
+
+mongoose.connect(uri);
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+mongoose.connection.once('open', function callback () {
+    console.log("DB connected successfully");
+});
 
 module.exports = {mongoose};

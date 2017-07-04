@@ -69,6 +69,34 @@ try{
 
     });
 
+    /*Delete specific todos by id*/
+    app.delete('/todo/:id',(req,res)=>{
+        let _id = req.param('id'); //Receive id
+        try{
+            _id = new ObjectID(_id);
+        }catch (e){
+            return res.status(400).send({message: "Invalid id for todo"});
+        }
+
+        console.log('New request to delete by id ' + _id);
+        Todo.findOneAndRemove(_id).then(
+            (todo)=>{
+                if(todo !== null){
+                    console.log(`todo with id ${_id} has been successfully deleted`);
+                    res.send({
+                        todo
+                    });
+                }else{
+                    return res.send({todo,message: "todo not found in system"});
+                }
+            },(err)=>{
+                res.status(400).send(err);
+            }).catch((err)=>{
+            return res.status(400).send({message:"No todos found"});
+        })
+
+    });
+
 
     /*Http2 server setup*/
     /*spdy
