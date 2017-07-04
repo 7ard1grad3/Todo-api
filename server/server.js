@@ -1,4 +1,4 @@
-const port = 3000;
+const port = process.env.PORT || 3000;
 const spdy = require('spdy');
 const express = require('express');
 const path = require('path');
@@ -83,8 +83,8 @@ try{
         });*/
     /*Regualr http setup*/
 
-    app.listen(3000, () => {
-        console.log('Http server started');
+    app.listen(port, () => {
+        console.log(`Http server started at ${port}`);
     });
 
     module.exports = {app};
