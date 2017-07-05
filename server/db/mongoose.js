@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const uri = process.env.MONGO_DB || 'mongodb://localhost:27017/TodoApp';
+const uri = process.env.MONGO_DB;
 
 mongoose.Promise = global.Promise;
 const options = {

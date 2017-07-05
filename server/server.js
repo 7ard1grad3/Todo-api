@@ -1,4 +1,10 @@
-const port = process.env.PORT || 3000;
+const env = process.env.NODE_ENV || 'development';
+if(env === 'development'){
+    process.env.PORT = 3000;
+    process.env.MONGO_DB = 'mongodb://localhost:27017/TodoApp';
+}
+
+const port = process.env.PORT;
 const spdy = require('spdy');
 const express = require('express');
 const path = require('path');
@@ -154,7 +160,7 @@ try{
     /*Regualr http setup*/
 
     app.listen(port, () => {
-        console.log(`Http server started at ${port}`);
+        console.log(`Http server started at ${port} with ${env} environment`);
     });
 
     module.exports = {app};
