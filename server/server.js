@@ -1,10 +1,4 @@
-const env = process.env.NODE_ENV || 'development';
-if(env === 'development'){
-    process.env.PORT = 3000;
-    process.env.MONGO_DB = 'mongodb://localhost:27017/TodoApp';
-}
-
-const port = process.env.PORT;
+require('./config/config.js');
 const spdy = require('spdy');
 const express = require('express');
 const path = require('path');
