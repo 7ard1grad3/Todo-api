@@ -3,6 +3,9 @@ const spdy = require('spdy');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const _ = require('lodash');
+
+
 var bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose');
 const {ObjectID} = require('mongodb');
@@ -83,6 +86,45 @@ try{
             (todo)=>{
                 if(todo !== null){
                     console.log(`todo with id ${_id} has been successfully deleted`);
+                    res.send({
+                        todo
+                    });
+                }else{
+                    return res.send({todo,message: "todo not found in system"});
+                }
+            },(err)=>{
+                res.status(400).send(err);
+            }).catch((err)=>{
+            return res.status(400).send({message:"No todos found"});
+        })
+
+    });
+
+    /*Patch specific todos by id*/
+    app.patch('/todo/:id',(req,res)=>{
+        let _id = req.param('id'); //Receive id
+        try{
+            _id = new ObjectID(_id);
+        }catch (e){
+            return res.status(400).send({message: "Invalid id for todo"});
+        }
+        let body = _.pick(req.body,['text','completed']); //select only specific keys
+
+        console.log('New request to patch by id ' + _id);
+
+        /*Check if completed is boolean*/
+        if(_.isBoolean(body.completed) && body.completed){
+            //completed set as true
+            body.completedAt = new Date().getTime();
+        }else{
+            body.completed = false;
+            body.completedAt = null;
+        }
+
+        Todo.findOneAndUpdate(_id,{$set: body},{new: true}).then(
+            (todo)=>{
+                if(todo !== null){
+                    console.log(`todo with id ${_id} has been successfully updated`);
                     res.send({
                         todo
                     });
