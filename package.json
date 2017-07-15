@@ -21,7 +21,8 @@
     "mongodb": "^2.2.29",
     "mongoose": "^4.10.8",
     "promise": "^8.0.0",
-    "spdy": "^3.4.7"
+    "spdy": "^3.4.7",
+    "validator": "^8.0.0"
   },
   "devDependencies": {
     "expect": "^1.20.2",
