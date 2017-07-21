@@ -8,10 +8,15 @@ const options = {
     pass: 'testpassword'
 };
 
-mongoose.connect(uri);
-mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
-mongoose.connection.once('open', function callback () {
-    console.log("DB connected successfully");
+
+try {
+    mongoose.createConnection(uri);
+    mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+    mongoose.connection.once('open', function callback () {
+        console.log("DB connected successfully");
 });
+} catch (err) {
+    console.log(`Failed to connect to DB. Error: {err}`);
+}
 
 module.exports = {mongoose};
