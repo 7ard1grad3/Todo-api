@@ -5,10 +5,11 @@ mongoose.Promise = global.Promise;
 const options = {
     db: { native_parser: true },
     user: 'sheidin',
-    pass: 'testpassword'
+    pass: 'testpassword',
+    useMongoClient: true
 };
 
-mongoose.connect(uri);
+mongoose.connect(uri,{ useMongoClient: true });
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 mongoose.connection.once('open', function callback () {
     console.log("DB connected successfully");

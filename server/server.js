@@ -9,6 +9,13 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
+const bcryptjs = require('bcryptjs');
+const validator = require('validator');
+
+const salt = bcryptjs.genSaltSync(10);
+
+
+//console.log(bcryptjs.compareSync(key, hash)); // true
 
 
 var bodyParser = require('body-parser');
@@ -145,6 +152,51 @@ try{
     });
 
 
+    /*Add new user to DB*/
+    app.post('/user',function(req,res){
+        if(req.body.password){
+            password = bcryptjs.hashSync(_.trim(req.body.password),this.salt);
+        }
+        const newUser = new User({
+            email: req.body.email,
+            password: password
+        });
+        newUser.save().then(
+            (doc)=>{
+                res.send(_.pick(doc,['id','email']));
+            },(err)=>{
+                res.status(400).send(err);
+            })
+    });
+
+    /*Login new user to DB*/
+    app.post('/user/login',function(req,res){
+        //Get email
+        let email = _.trim(req.body.email); //Receive email
+        if(!validator.isEmail(email)){
+            return res.status(400).send({message: "Invalid email format"});
+        }
+        User.findOne({'email':email}).then(
+            (user)=>{
+
+                if(user !== null){
+                    /*Validate for password*/
+                    const password = _.pick(user,['password']);
+                    if(bcryptjs.compareSync(req.body.password, password.password)){
+                        return res.status(200).send({message: "You are successfully connected"});
+                    }else{
+                        return res.status(501).send({message: "Incorrect email or password"});
+                    }
+                }else{
+                    return res.send({user,message: "You're not registered in our system"});
+                }
+            },(err)=>{
+                res.status(400).send(err);
+            }).catch((err)=>{
+            return res.status(400).send({message:"User not found"});
+        });
+    });
+
     /*Http2 server setup*/
     /*spdy
         .createServer(options, app)
@@ -164,7 +216,7 @@ try{
 
     module.exports = {app};
 }catch(err){
-    console.log('Error in app: ' + err)
+    console.log('Error in app: ' + err);
     return process.exit(1)
 }
 

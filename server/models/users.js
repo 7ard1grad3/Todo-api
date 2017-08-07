@@ -7,10 +7,12 @@ const User = mongoose.model('Users',{
         minlength: 1,
         trim: true,
         unique: true,
-        validator: (value) => {
-            return validator.isEmail(value);
-        },
-        message: '{VALUE} is not a valid email'
+        validate: {
+            validator: function(email) {
+                return validator.isEmail(email);
+            },
+            message: '({VALUE}) is not a valid email format!'
+        }
     },
     password: {
         type: String,
